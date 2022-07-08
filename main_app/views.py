@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from .models import Cat, Toy, Photo
 from .forms import FeedingForm
 
@@ -89,6 +91,41 @@ def add_photo(request, cat_id):
     # print an error message
   return redirect('detail', cat_id=cat_id)
   # redirect the user to the origin 
+  """
+    check if the request method is POST,
+    we need to create a new user because from was submitted
+    
+    1) use the form data from the request to create a form/model instance from the model form
+    2) validate the form to ensure it was completed
+      2.2) if form not valid - redirect the user to the signup page with an error message
+    3) saving the user object to the database
+    4) login the user (creates a session for the logged in user in the database)
+    5) redirect the user to the cats index page
+  """
+
+  """
+    else the request is GET == the user clicked on the signup link
+    1) create a blank instance of the model form
+    2) provide that form instance to a registration template
+    3) render the template so the user can fill out the form
+  """
+def signup(request):
+  error_messages = ''
+  if request.method == 'POST':
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+      user = form.save()
+      login(request, user)
+      return redirect('index')
+    else:
+      error_messages = 'Invalid Info - Please Try Again'
+  form = UserCreationForm()
+  context = {
+    'form': form, 
+    'error_messages': error_messages
+  }
+  return render(request, 'registration/signup.html', context)
+
 
 
 class CatCreate(CreateView):
