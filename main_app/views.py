@@ -9,7 +9,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Cat, Toy, Photo
 from .forms import FeedingForm
 
-import uuid
+import uuid 
 import boto3
 
 S3_BASE_URL = 'https://s3.us-east-1.amazonaws.com/'
